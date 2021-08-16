@@ -1,0 +1,7 @@
+appdirs
+hidapi
+pillow
+pygetwindow
+# pyinstaller
+pystray
+wmi

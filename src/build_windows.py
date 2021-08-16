@@ -1,14 +1,19 @@
 import os
 import sys
+from shutil import rmtree
+from glob import glob
 
 if 'win32' not in sys.platform:
     print("this script is for windows only!")
     exit()
 
-os.system('rm -rfv ./__pycache__')
-os.system('rm -rfv ./build')
-os.system('rm -rfv ./dist')
-os.system('rm -rfv ./*.spec')
+
+# Cleanup
+rmtree('./__pycache__', ignore_errors=True)
+rmtree('./build', ignore_errors=True)
+rmtree('./dist', ignore_errors=True)
+for path in glob('./*.spec'):
+	os.remove(path)
 
 THIS_VERSION = None
 try:
@@ -38,7 +43,9 @@ os.rename(original_name, new_name)
 zip_file_name = "duckypad_autoprofile_" + THIS_VERSION + "_win10_x64.zip"
 os.system('7z.exe a ' + zip_file_name + ' -r ' + new_name)
 
-os.system('rm -rfv ./__pycache__')
-os.system('rm -rfv ./build')
-os.system('rm -rfv ./dist')
-os.system('rm -rfv ./*.spec')
+# Cleanup
+rmtree('./__pycache__', ignore_errors=True)
+rmtree('./build', ignore_errors=True)
+rmtree('./dist', ignore_errors=True)
+for path in glob('./*.spec'):
+	os.remove(path)

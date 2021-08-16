@@ -18,6 +18,10 @@ import check_update
 import platform
 from appdirs import *
 import subprocess
+from pystray import MenuItem as item
+import pystray
+from PIL import Image
+
 
 def is_root():
     return os.getuid() == 0
@@ -155,7 +159,7 @@ root.resizable(width=FALSE, height=FALSE)
 connection_info_str = StringVar()
 connection_info_str.set("<--- Press Connect button")
 connection_info_lf = LabelFrame(root, text="Connection", width=620, height=60)
-connection_info_lf.place(x=PADDING, y=0) 
+connection_info_lf.place(x=PADDING, y=0)
 connection_info_label = Label(master=connection_info_lf, textvariable=connection_info_str)
 connection_info_label.place(x=110, y=5)
 connection_info_label.config(foreground='orange red')
@@ -197,7 +201,7 @@ def toggle_autoswitch(whatever):
     config_dict['autoswitch_enabled'] = not config_dict['autoswitch_enabled']
     save_config()
     refresh_autoswitch()
-    
+
 def open_save_folder():
     # print("def open_save_folder():")
     logging.info("def open_save_folder():")
@@ -210,7 +214,7 @@ def open_save_folder():
         webbrowser.open(save_path)
 
 dashboard_lf = LabelFrame(root, text="Dashboard", width=620, height=95)
-dashboard_lf.place(x=PADDING, y=60) 
+dashboard_lf.place(x=PADDING, y=60)
 prev_profile_button = Button(dashboard_lf, text="Prev Profile", command=prev_prof_click)
 prev_profile_button.config(width=11, height=1)
 prev_profile_button.place(x=410, y=5)
@@ -422,7 +426,7 @@ def create_rule_window(existing_rule=None):
     app_name_label.place(x=20, y=25)
     app_name_entrybox = Entry(rule_window)
     app_name_entrybox.place(x=230, y=25, width=200)
-    
+
     window_name_label = Label(master=rule_window, text="AND window title contains:")
     window_name_label.place(x=20, y=50)
     window_name_entrybox = Entry(rule_window)
@@ -461,7 +465,7 @@ def create_rule_window(existing_rule=None):
     current_window_title_label.place(x=10, y=30)
 
     window_list_lf = LabelFrame(rule_window, text="All windows", width=620, height=270)
-    window_list_lf.place(x=PADDING, y=195+30) 
+    window_list_lf.place(x=PADDING, y=195+30)
     window_list_fresh_button = Button(window_list_lf, text="Refresh", command=lambda:update_windows(windows_list_text_area))
     window_list_fresh_button.config(width=80, height=1)
     window_list_fresh_button.place(x=20, y=220)
@@ -531,7 +535,7 @@ def rule_shift_down():
 
 
 rules_lf = LabelFrame(root, text="Autoswitch rules", width=620, height=410)
-rules_lf.place(x=PADDING, y=160) 
+rules_lf.place(x=PADDING, y=160)
 
 profile_var = StringVar()
 profile_lstbox = Listbox(rules_lf, listvariable=profile_var, height=20, exportselection=0)
@@ -627,6 +631,36 @@ else:
 
 dp_fw_update_label = Label(master=updates_lf, text="duckyPad firmware: Unknown")
 dp_fw_update_label.place(x=5, y=30)
+
+
+
+# ------------------------------------------------------------------------------
+
+# Hide the window and show on the system taskbar
+def hide_window():
+    root.withdraw()
+    image = Image.open("icon.ico")
+    menu = (item('Quit', quit_window), item('Show', show_window))
+    icon = pystray.Icon("name", image, appname, menu)
+    icon.run()
+
+
+# Define a function for quit the window
+def quit_window(icon, _):
+    icon.stop()
+    root.destroy()
+
+
+# Define a function to show the window again
+def show_window(icon, _):
+    icon.stop()
+    root.after(0, root.deiconify())
+
+
+root.protocol('WM_DELETE_WINDOW', hide_window)
+
+# ------------------------------------------------------------------------------
+
 
 # ------------------
 
